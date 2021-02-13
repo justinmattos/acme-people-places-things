@@ -58,12 +58,23 @@ app.get('/', async (req, res, next) => {
           <input type="submit" value="Create Purchase"></input>
         </form>
         <div>
-          ${purchases.map(
-            (purchase) => `
-              <p>${purchase.personId}
+          ${purchases
+            .map(
+              (purchase) => `
+              <p>${people[purchase.personId - 1].name} purchased ${
+                purchase.amount
+              } ${things[purchase.thingId - 1].name} in ${
+                places[purchase.placeId - 1].name
+              } on ${purchase.date.getMonth() + 1}/${
+                purchase.date.getDay() + 1
+              }/${purchase.date.getFullYear()}
+              <form method="POST" action="/?_method=DELETE"><button name="purchase" value ="${
+                purchase.id
+              }">X</button></form>
               </p>
           `
-          )}
+            )
+            .join('')}
         </div>
         <h2>People (${people.length})</h2>
         <ul>
@@ -120,6 +131,16 @@ app.post('/', async (req, res, next) => {
   });
   purchase.save();
   res.redirect('/');
+});
+
+app.delete('/', async (req, res, next) => {
+  try {
+    const purchase = await Purchase.findByPk(req.body.purchase);
+    await purchase.destroy();
+    res.redirect('/');
+  } catch (err) {
+    next(err);
+  }
 });
 
 const init = async () => {
