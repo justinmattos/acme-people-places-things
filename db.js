@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
-const { STRING, INTEGER, DATE } = Sequelize;
+const { DataTypes } = Sequelize;
 
 const db = new Sequelize(
-  process.env.PORT || 'postgres://localhost/acme_people_places_things'
+  process.env.PORT || 'postgres://localhost:5432/acme_people_places_things'
 );
 
 const Person = db.define('person', {
   name: {
-    type: STRING,
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
@@ -15,7 +15,7 @@ const Person = db.define('person', {
 
 const Place = db.define('places', {
   name: {
-    type: STRING,
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
@@ -23,7 +23,7 @@ const Place = db.define('places', {
 
 const Thing = db.define('things', {
   name: {
-    type: STRING,
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
@@ -31,11 +31,11 @@ const Thing = db.define('things', {
 
 const Purchase = db.define('purchases', {
   amount: {
-    type: INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   date: {
-    type: DATE,
+    type: DataTypes.DATE,
     allowNull: false,
   },
 });
@@ -74,6 +74,23 @@ const syncAndSeed = async () => {
       bazz.save(),
       quq.save(),
     ]);
+    const [purch1, purch2, purch3] = await Promise.all(
+      [
+        [5, '9/13/1994', moe, nyc, foo],
+        [7, '5/8/1994', lucy, la, quq],
+        [9, '12/7/2019', larry, nyc, bazz],
+      ].map(
+        ([amount, date, person, place, thing]) =>
+          new Purchase({
+            amount: amount,
+            date: date,
+            personId: person.id,
+            placeId: place.id,
+            thingId: thing.id,
+          })
+      )
+    );
+    await Promise.all([purch1.save(), purch2.save(), purch3.save()]);
   } catch (err) {
     console.log(err);
   }

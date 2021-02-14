@@ -1,0 +1,32 @@
+body {
+}
+
+body * {
+  margin: 0;
+  padding: 0;
+}
+
+body > div {
+  display: flex;
+  flex-flow: row-reverse wrap;
+  align-items: start;
+}
+
+body h1 {
+  width: 100%;
+  margin: 0 0 0.25em;
+  text-align: center;
+}
+
+body > div > div {
+  width: 50%;
+}
+
+div > form {
+  display: flex;
+  flex-flow: column;
+}
+
+p form {
+  width: 10px;
+}
